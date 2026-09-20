@@ -1,2 +1,8 @@
 .DS_Store
 .obsidian/
+
+# 代码 demo
+demos/**/node_modules/
+demos/**/dist/
+demos/**/.env
+demos/**/.env.local
