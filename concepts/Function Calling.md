@@ -70,7 +70,7 @@ sequenceDiagram
 ## 关联
 - 上位概念：[[LLM 核心心智模型]]
 - 相关概念：[[对话消息结构]]、[[RAG 全链路]]、[[Agent 与 MCP]]
-- 项目实践：[[ ]]
+- 项目实践：[[02 Function Calling Demo]]
 
 ## 费曼问答记录
 - Q: 用户说"帮我把订单 1234 退了"，模型返回 tool_calls: refund_order——在真正调退款接口之前，必须做哪两件事？
