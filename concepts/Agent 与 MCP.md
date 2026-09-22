@@ -105,6 +105,13 @@ flowchart LR
   A: Agent 不会“继续循环调用 MCP”解决问题；MCP Client 会在工具发现或工具调用阶段失败，表现为接口 500、流式 output-error，或该工具不可用。生产环境要做超时、重连、健康检查、降级提示、工具禁用和可观测日志，避免一个 MCP Server 挂掉拖垮整条对话链路。
 - Q: stepCountIs(5) 为什么是“上限”而不是“必跑 5 步”？谁决定提前结束？
   A: stepCountIs(5) 只是最多允许 5 轮模型-工具循环。每轮工具结果回传后，LLM（Large Language Model，大语言模型）会基于当前上下文决定继续调用工具还是生成最终答案；工具结果只是输入信号，真正决定提前结束的是模型输出不再包含 tool_call。
+- Q: Demo 03 中 Agent Loop 和 MCP Server 如何协作？为什么 stdio 模式下 MCP Server 不能用 console.log？
+  A: 后端把用户问题、系统提示词和可用工具交给 AI Client；模型先输出 tool_call，应用代码执行本地工具或通过 MCP Client 调用 MCP Server 暴露的工具，工具结果以结构化 tool result 回到下一轮模型上下文；模型观察结果后决定继续调用工具或生成最终答案。MCP Server 负责用统一协议暴露工具发现和工具调用能力。stdio 模式下 stdout 是 JSON-RPC 协议通信通道，console.log 会污染协议流；调试日志应写到 stderr，例如 console.error。顶层 isError: true 用来让 MCP Client 和上层 Agent 明确识别工具调用失败。
+- Q: 复述修正：tool result、stdio 日志、isError 顶层分别要怎么讲？
+  A: tool result 是结构化数据，会进入下一轮模型上下文，AI SDK 会编排这部分，不是单纯字符串拼接。stdio 模式下 stdout 是 JSON-RPC 通信通道，console.log 会写入普通文本并污染协议流，导致 MCP Client 解析失败；日志应该写 stderr，也就是 console.error。isError 是 MCP 工具返回协议的一部分，放在顶层才能被 MCP Client 和 Agent 编排层识别为工具失败。
+
+## 卡点记录
+- 2026-09-22：首轮能讲清 Agent 多步链路和 MCP 的标准化价值；二轮已修正：工具结果是结构化 tool result，不是简单拼 prompt；stdio 模式不能用 console.log 的核心原因是 stdout 被 JSON-RPC 协议占用，而不是 worker 或进程不同。
 
 ## 费曼验收
 - [x] 不看笔记能给外行讲清楚（2026-09-10 首次复述全部通过）
