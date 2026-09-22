@@ -92,7 +92,7 @@ flowchart LR
 ## 关联
 - 上位概念：[[LLM 核心心智模型]]
 - 相关概念：[[Function Calling]]、[[对话消息结构]]、[[RAG 全链路]]
-- 项目实践：[[ ]]
+- 项目实践：[[03 Agent 与 MCP Demo]]
 
 ## 费曼问答记录
 - Q: Agent 和 Function Calling 到底差在哪？
@@ -101,8 +101,12 @@ flowchart LR
   A: 2 次工具调用，对应 2 轮循环。第 1 轮：调用 get_weather → 观察结果下雨 → 判断需要再调工具；第 2 轮：调用 order_umbrella → 观察下单成功 → 判断信息足够，生成最终答案。"观察-判断-再调"的节奏是 Agent 区别于脚本的本质，不是同一轮里连调两次。
 - Q: MCP 解决了什么问题？用 USB-C 类比。
   A: MCP 统一了工具的发现和调用协议（list tools / call tool / 结果返回），像 USB-C 统一了外设接口。工具提供方实现 MCP Server，应用作为 MCP Client 即插即用，不需要为每个工具单独写适配代码。
+- Q: 如果 MCP Server 进程崩了，Agent 的行为会怎样？生产环境该怎么兜底？
+  A: Agent 不会“继续循环调用 MCP”解决问题；MCP Client 会在工具发现或工具调用阶段失败，表现为接口 500、流式 output-error，或该工具不可用。生产环境要做超时、重连、健康检查、降级提示、工具禁用和可观测日志，避免一个 MCP Server 挂掉拖垮整条对话链路。
+- Q: stepCountIs(5) 为什么是“上限”而不是“必跑 5 步”？谁决定提前结束？
+  A: stepCountIs(5) 只是最多允许 5 轮模型-工具循环。每轮工具结果回传后，LLM（Large Language Model，大语言模型）会基于当前上下文决定继续调用工具还是生成最终答案；工具结果只是输入信号，真正决定提前结束的是模型输出不再包含 tool_call。
 
 ## 费曼验收
 - [x] 不看笔记能给外行讲清楚（2026-09-10 首次复述全部通过）
-- [ ] 能徒手写出最小可运行 demo
+- [x] 能徒手写出最小可运行 demo（2026-09-22 完成 demo 03：多工具 Agent + MCP calculator）
 - [ ] 模拟面试中能答出追问
