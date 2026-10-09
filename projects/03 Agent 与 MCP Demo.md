@@ -1,6 +1,9 @@
 ---
 tags:
   - 项目复盘
+type: project
+domain: AI
+topic: Agent
 status: 已完成
 created: 2026-09-22
 repo: "demos/03-agent-mcp"

@@ -1,0 +1,17 @@
+filters:
+  and:
+    - file.folder == "concepts"
+views:
+  - type: table
+    name: 按创建时间
+    order:
+      - file.name
+      - domain
+      - topic
+      - created
+      - status
+    sort:
+      - property: created
+        direction: ASC
+    columnSize:
+      file.name: 277

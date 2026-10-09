@@ -1,6 +1,9 @@
 ---
 tags:
   - 项目复盘
+type: project
+domain: AI
+topic: Tool Calling
 status: 已完成
 created: 2026-09-21
 repo: "demos/02-function-calling"

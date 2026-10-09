@@ -1,6 +1,9 @@
 ---
 tags:
   - 概念卡
+type: concept
+domain: AI
+topic: Tool Calling
 status: 已理解 # 学习中 / 已理解 / 已考核 / 需复习
 created: 2026-09-09
 source: ""

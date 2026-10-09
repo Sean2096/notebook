@@ -1,6 +1,9 @@
 ---
 tags:
   - 概念卡
+type: concept
+domain: AI
+topic: RAG
 status: 需复习
 created: 2026-09-10
 source: ""
