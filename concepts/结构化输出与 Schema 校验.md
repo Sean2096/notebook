@@ -53,8 +53,11 @@ const { output } = await generateText({
   model: deepseek('deepseek-chat'),
   prompt: '...',
   output: Output.object({ schema }),
-  maxRetries: 2, // schema 校验失败时 SDK 自动重试
+  maxRetries: 2, // 只覆盖传输层错误（限流/超时/5xx）的自动重试
 })
+// ⚠️ schema 校验失败：模型输出了无法解析/不符合 schema 的内容时，
+// 当前版本会抛 AI_NoObjectGeneratedError（含 text/finishReason/cause），
+// 不会像旧 generateObject 那样自动重试——catch 它是你的责任，见下方踩坑。
 
 // 流式：逐字段增量渲染，中间态保证是可解析的 JSON
 const { partialOutputStream } = streamText({
@@ -76,9 +79,10 @@ v6+ 的额外好处：结构化输出可以和 tool calling（工具调用）在
 | 名称 | 作用 | 注意点 / 默认值 |
 | --- | --- | --- |
 | zod schema | 定义输出契约 | `.describe()` 是给模型看的说明文字，直接影响填写质量；嵌套过深会降低生成质量 |
-| `Output.object({ schema })` | AI SDK v6+ 结构化输出入口 | 挂在 `generateText`/`streamText` 上；`Output.array` 等变体需按当前版本文档核实 |
+| `Output.object({ schema })` / `Output.array` | AI SDK v6+ 结构化输出入口 | 挂在 `generateText`/`streamText` 上（官方文档已确认两者都存在）；可与工具调用同请求 |
+| `AI_NoObjectGeneratedError` | 结构化输出失败错误 | 模型没生成/无法解析/校验不过时抛出，带 `text`（原始输出）、`finishReason`（如 `length` 截断）、`cause`；**必须 catch，不会自动重试** |
 | `response_format` / strict | 协议层 schema 约束 | strict 模式通常要求字段全部 required + 关闭额外属性；**第三方 OpenAI 兼容实现可能静默忽略该参数**（DeepSeek 等），必须靠本地 zod 兜底 |
-| `maxRetries` | 校验失败重试 | 只救格式，不救内容错误；重试烧钱，线上要埋点统计重试率 |
+| `maxRetries` | 传输层自动重试 | 只救限流/超时/5xx，**不救 schema 校验失败**；别把两者混为一谈 |
 | `partialOutputStream` | 流式部分对象 | 中间态字段可能为空/数组为 0 项，不要把中间态当最终值提交 |
 | `finish_reason: 'length'` | 输出被截断 | JSON 被截断 = 解析必炸；长数组输出要预留足够 max tokens |
 
@@ -90,7 +94,7 @@ v6+ 的额外好处：结构化输出可以和 tool calling（工具调用）在
 - [ ] schema 设计成深层嵌套 + 超长数组 → 模型生成质量下降且容易被长度截断
 - [ ] 照搬 GPT 的 strict structured output 代码到 DeepSeek 等兼容层 → 参数被忽略，静默退回自由文本
 - [ ] 流式场景等完整 JSON 才渲染（丢体验），或拿中间态直接落库（丢数据）
-- [ ] 没写校验失败分支 → 用户看到空白卡片，日志里什么都没有
+- [ ] 没写校验失败分支 → 用户看到空白卡片，日志里什么都没有（v6+ 会抛 `AI_NoObjectGeneratedError`，`maxRetries` 不覆盖它，必须自己 catch + 降级）
 
 ## 前端视角类比
 <!-- TODO（你来填，这是你的主场）：把"schema 是合同、模型输出是不可信的外部输入"翻译成前端概念。
