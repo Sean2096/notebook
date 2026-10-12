@@ -4,7 +4,7 @@ tags:
 type: concept
 domain: AI
 topic: Agent
-status: 已理解
+status: 已理解 # 学习中 / 已理解 / 已考核 / 需复习
 created: 2026-09-10
 source: ""
 ---
@@ -43,7 +43,8 @@ flowchart TD
 **MCP 架构**
 - MCP Server：工具提供方实现，暴露 Tools（调用工具）、Resources（读取数据/文件）、Prompts（预置提示模板）
 - MCP Client：你的应用，通过标准协议发现和调用所有已连接的 Server
-- 协议层：JSON-RPC over stdio/SSE（Server-Sent Events，服务器推送事件），定义工具发现、调用、结果返回的格式
+- 协议层：JSON-RPC 2.0，两种传输——**stdio**（本地，Client 把 Server 作为子进程启动，stdin/stdout 走协议消息、stderr 走日志）和 **Streamable HTTP**（远程，单一 `/mcp` 端点，POST 发请求，响应可为普通 JSON 或 SSE 流）。
+  ⚠️ 2024-11-05 版那套「POST 端点 + 独立 SSE 端点」的 HTTP+SSE 传输**已被官方标记 deprecated**，2025-03 起由 Streamable HTTP 取代；被弃用的是这套传输实现，SSE 作为技术仍在 Streamable HTTP 内部用于流式响应。更新的规范 revision 进一步去掉协议级握手与会话，改成每请求自包含（无状态），可部署到 Serverless。
 
 ```mermaid
 flowchart LR
@@ -70,7 +71,8 @@ flowchart LR
 | 名称 | 作用 | 注意点 / 默认值 |
 | --- | --- | --- |
 | max_steps | 最大工具调用轮次 | 通常 5~20；防止死循环，超限后强制让模型基于已有信息回答 |
-| MCP Server | 工具提供方 | 暴露 Tools/Resources/Prompts 三种能力；通过 JSON-RPC 通信 |
+| MCP Server | 工具提供方 | 暴露 Tools/Resources/Prompts 三种能力；通过 JSON-RPC 2.0 通信，传输层选 stdio（本地）或 Streamable HTTP（远程） |
+| 传输层 transport | 消息怎么送到 Server | 本地子进程用 stdio（stdout 是协议通道，日志必须走 stderr）；远程用 Streamable HTTP 单端点。旧 HTTP+SSE 传输已 deprecated，别照老教程接 |
 | MCP Client | 工具消费方 | 应用侧集成，发现并调用所有已连接 Server 的工具 |
 | ReAct | 推理与行动交替的 Agent 模式 | 最经典的 Agent 范式，还有 Plan-Execute 等变体 |
 | tool_choice | 是否强制模型调用工具 | Agent 场景通常设 "auto"，让模型自主判断 |
@@ -81,6 +83,7 @@ flowchart LR
 - [ ] 工具描述不清晰 → 模型选错工具或重复调（description 要写清"什么场景用"和"参数含义"）
 - [ ] 多工具结果全量回传 → token 膨胀，模型抓不住重点（应裁剪格式化）
 - [ ] MCP Server 挂了不降级 → Agent 整体不可用（需超时 + 降级策略）
+- [ ] 照 2024 年教程用 HTTP+SSE 接远程 MCP → 该传输已被官方 deprecated，新项目直接用 Streamable HTTP；本地子进程仍用 stdio
 
 ## 面试追问
 - **Q：Agent 和 Function Calling 的区别是什么？**
@@ -89,6 +92,8 @@ flowchart LR
   **A：** 传统 API 每个工具自己写适配代码；MCP 统一了工具发现（list tools）、调用（call tool）、结果返回的协议，模型能自动发现"有哪些工具可用"，不需要硬编码。MCP 是工具接入的标准，不是新的工具类型。
 - **Q：Agent 死循环怎么办？**
   **A：** 三层防护：max_steps 硬上限（超了强制结束）、工具调用去重（连续 3 次调同一工具同样参数就中断）、token 预算（总消耗超预算就终止）。
+- **Q：MCP 的传输层怎么选？**
+  **A：** 本地、和 Agent 同机的工具用 **stdio**——Client 把 Server 当子进程拉起，零网络开销，但 stdout 被 JSON-RPC 独占，日志必须写 stderr。远程/多用户共享的工具用 **Streamable HTTP**——单端点、POST 一发一收、响应可选 SSE 流做进度推送，能走标准网关和反向代理。旧版「POST 端点 + 独立 SSE 端点」的 HTTP+SSE 传输已被官方 deprecated，别照 2024 年的教程接。
 - **Q：多 Agent 协作（multi-agent）是什么？**
   **A：** 多个 Agent 各自负责不同领域，通过消息传递协作。如一个 Agent 管检索、一个管代码生成、一个管审核。优势是单一 Agent 的 prompt 更聚焦，劣势是协调开销大。入门阶段先做好单 Agent 即可。
 
@@ -114,6 +119,7 @@ flowchart LR
   A: tool result 是结构化数据，会进入下一轮模型上下文，AI SDK 会编排这部分，不是单纯字符串拼接。stdio 模式下 stdout 是 JSON-RPC 通信通道，console.log 会写入普通文本并污染协议流，导致 MCP Client 解析失败；日志应该写 stderr，也就是 console.error。isError 是 MCP 工具返回协议的一部分，放在顶层才能被 MCP Client 和 Agent 编排层识别为工具失败。
 
 ## 卡点记录
+- 2026-10-12 卡片修订：原写「JSON-RPC over stdio/SSE」有误——HTTP+SSE 传输已被官方 deprecated，远程应写 Streamable HTTP（SSE 作为技术仍在该传输内部用于流式响应）。已补传输选型面试追问。
 - 2026-09-22：首轮能讲清 Agent 多步链路和 MCP 的标准化价值；二轮已修正：工具结果是结构化 tool result，不是简单拼 prompt；stdio 模式不能用 console.log 的核心原因是 stdout 被 JSON-RPC 协议占用，而不是 worker 或进程不同。
 
 ## 费曼验收

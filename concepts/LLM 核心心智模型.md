@@ -4,7 +4,7 @@ tags:
 type: concept
 domain: AI
 topic: LLM
-status: 已理解
+status: 已理解 # 学习中 / 已理解 / 已考核 / 需复习
 created: 2026-09-09
 source: ""
 ---
@@ -22,7 +22,7 @@ source: ""
   - 以为输出确定 → 没做 structured output，解析 JSON 随机失败。
 
 ## 原理 / 流程
-1. **token**：文本切分单位（约 0.75 个英文单词 / 1~2 个汉字）。窗口大小、计费、延迟都按 token 计。
+1. **token**：文本切分单位，窗口、计费、延迟都按 token 计。**换算不是常数，强依赖分词器词表**：英文约 1 token ≈ 0.75 个单词（1 词 ≈ 1.3 token，1 字符 ≈ 0.25~0.3 token）；中文差异极大——对中文优化过的词表（DeepSeek/Qwen 等）约 **1 个汉字 ≈ 0.6~1 token**，而老的 cl100k_base（GPT-3.5/4）是 **1 个汉字 ≈ 1.5~2 token**，方向相反。做成本预算必须查当前模型官方口径，别沿用旧模型经验值。
 2. **无状态**：每次 API 调用相互独立，服务端不保存会话；多轮对话 = 客户端把历史消息全量重发。
 3. **上下文窗口**：输入 + 输出共享 token 上限（如 128k / 200k）；超了报错或截断，需要自己做裁剪/摘要。
 4. **生成式输出**：模型逐 token 采样生成；temperature 控制随机性（0 = 接近确定）。
@@ -45,13 +45,13 @@ flowchart LR
 | ----------------- | --------------------------- | ------------------------ |
 | context window    | 输入+输出 token 总上限             | 输入输出共享，输出要预留 max_tokens  |
 | temperature       | 采样随机性                       | 0 适合结构化抽取/分类，0.7+ 适合创作   |
-| max_output_tokens | 单次最大输出                      | 输出被截断时 finish_reason 会标记 |
+| maxOutputTokens / max_tokens | 单次最大输出 | **命名随栈而变**：Vercel AI SDK 用 `maxOutputTokens`；OpenAI 兼容协议（含 DeepSeek）请求体用 `max_tokens`（OpenAI 正迁移到 `max_completion_tokens`）；`max_output_tokens` 是 Gemini/Bedrock 风格。写错名字参数会被静默忽略。输出被截断时 `finish_reason` 标记为 `length` |
 | 价格                | 按 input/output 每百万 token 计费 | output 通常比 input 贵 3~5 倍 |
 
 ## 踩过的坑
 - [ ] 多轮对话只发最后一条消息 → 模型丢失上下文（正确做法：维护 messages 数组全量传）
 - [ ] 把长文档直接拼进 prompt → 超窗口报错 / 成本失控（正确做法：RAG 检索相关片段）
-- [ ] 让模型直接返回自由文本再正则解析 JSON → 随机失败（正确做法：structured output / JSON mode）
+- [ ] 让模型直接返回自由文本再正则解析 JSON → 随机失败（正确做法：structured output / JSON mode，见 [[结构化输出与 Schema 校验]]）
 - [ ] 忽略流式场景的错误处理 → SSE 中途断了前端无感知
 
 ## 面试追问
@@ -64,7 +64,7 @@ flowchart LR
 
 ## 关联
 - 上位概念：[[ ]]
-- 相关概念：[[对话消息结构]]、[[Function Calling]]、[[Embedding 与向量检索]]
+- 相关概念：[[对话消息结构]]、[[Function Calling]]、[[Embedding 与向量检索]]、[[结构化输出与 Schema 校验]]
 - 项目实践：[[01 流式 Chat Demo]]
 
 ## 费曼问答记录
@@ -76,5 +76,5 @@ flowchart LR
   A: 不记得。模型是无状态纯函数，记忆不在模型里，是系统的责任。应用层维护 messages 数组，每次全量重发。
 ## 费曼验收
 - [x] 不看笔记能给外行讲清楚（2026-09-09 复述通过：无状态重发/上下文限制/无记忆三题命中核心，修正点：重发的是含 assistant 回复的完整 messages；超长是报错截断而非"丢失"）
-- [ ] 能徒手写出最小可运行 demo
+- [ ] 能徒手写出最小可运行 demo（Demo 01 是在给定骨架上填空完成，不算徒手；待闭卷重写验收）
 - [ ] 模拟面试中能答出追问
