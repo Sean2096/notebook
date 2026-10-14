@@ -6,7 +6,7 @@ domain: AI
 topic: Tool Calling
 status: 已完成
 created: 2026-09-21
-repo: "demos/02-function-calling"
+repo: "demos/ai/02-function-calling"
 demo: ""
 ---
 

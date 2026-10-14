@@ -35,11 +35,17 @@
    demo 项目保持最小依赖、最小可运行；优先 TypeScript 生态（如 Vercel AI SDK）；反对过度设计和提前抽象，能跑通主链路优先。
 
 8. **笔记联动**
-   仓库目录约定（Templater 已配置文件夹模板，新建即自动套用，不要手动复制模板内容）：
-   - `concepts/`：概念笔记，新建 `.md` 自动套「概念卡」模板。一个概念一个文件，文件名即概念名（如 `concepts/RAG 检索链路.md`）。
-   - `projects/`：项目复盘，新建 `.md` 自动套「项目复盘卡」模板。
-   - `templates/`：仅存放模板本体，不要在里面写笔记。
-   讨论出明确概念结论时，提醒我（或经我同意后直接）在 `concepts/` 建对应概念卡；demo 里程碑或项目完成时，在 `projects/` 建复盘卡。代码仓库与笔记使用同一套命名，笔记间用 `[[双链]]` 互链。
+   **知识卡按 domain（知识领域）分目录，统一挂在 `notes/` 下；目录不按卡片类型划分。** 域内概念卡和速查卡混放，靠 frontmatter 的 `type` 区分（`concept` / `reference`）。Templater 已配置文件夹模板（对子目录同样生效），新建即自动套用，不要手动复制模板内容：
+   - `notes/ai/`：AI 转型学习（概念卡为主，新建自动套「概念卡」模板）。
+   - `notes/android/`：Android/移动端调试（速查卡，新建自动套「速查卡」模板）。
+   - `projects/<domain>/`：项目复盘卡，按域分子目录，新建自动套「项目复盘卡」模板。
+   - `demos/<domain>/<NN>-<slug>/`：练习代码工程，与笔记体系分开。
+   - `templates/`：仅存放模板本体（概念卡 / 速查卡 / 项目复盘卡），不要在里面写笔记。
+   `projects/` 和 `demos/` 是产出物，不进 `notes/`。
+   **编号按 domain 独立重启**：`projects/ai/01 … 04`、`demos/ai/01-streaming-chat …`，新领域从 `01` 开始（下一个 Android demo 即 `demos/android/01-xxx`）。复盘卡的 `repo:` / `demo:` 字段必须写完整路径 `demos/<domain>/<NN>-<slug>`。
+   **每一层目录都放一个 `.base` 索引**：`notes/全库索引.base`（`file.inFolder("notes")`，覆盖所有领域，新增领域不用改它）+ `notes/<domain>/<Domain> 索引.base`（`file.inFolder("notes/<domain>")`）+ `projects/Projects 索引.base`。统一按 `created` 倒序，用 `groupBy` 按 `file.folder` 或 `domain` 分组。
+   新增领域时的固定三步：建 `notes/<domain>/` 目录 → Templater `folder_templates` 里绑一个模板 → 建该域的 `.base`；不要把卡片塞进已有领域。一个概念/工具一个文件，文件名即主题（如 `notes/ai/RAG 全链路.md`、`notes/android/adb 多设备命令.md`）。
+   讨论出明确概念结论时，提醒我（或经我同意后直接）在对应 domain 目录建卡；demo 里程碑或项目完成时，在 `projects/<domain>/` 建复盘卡。代码仓库与笔记使用同一套命名，笔记间用 `[[双链]]` 互链（按文件名解析，移动文件不断链）。
    - **卡片状态由你自动维护，不要求我手动编辑文档**：费曼复述通过 → 勾选「不看笔记能给外行讲清楚」并把 status 推进为「已理解」；模拟面试答对追问 → 勾选对应项并推进为「已考核」；答得不好/讲不清 → status 标「需复习」并记录卡点。卡片内容需要修订时你直接改，改完告诉我改了什么。
    - **费曼问答必须存档**：每次费曼验收的题目和正确答案追加到概念卡的「费曼问答记录」区，格式为「Q: 题目 / A: 正确答案」。确保以后回头复习时能看到：当初问了什么、正确答案是什么、我当时哪里卡住了。
 

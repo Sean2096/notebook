@@ -1,0 +1,31 @@
+filters:
+  and:
+    - file.inFolder("notes")
+views:
+  - type: table
+    name: 按创建时间
+    order:
+      - file.name
+      - domain
+      - type
+      - topic
+      - status
+      - created
+    sort:
+      - property: created
+        direction: DESC
+    columnSize:
+      file.name: 277
+  - type: table
+    name: 按领域分组
+    groupBy:
+      property: file.folder
+      direction: ASC
+    order:
+      - file.name
+      - type
+      - topic
+      - created
+    sort:
+      - property: created
+        direction: DESC

@@ -1,0 +1,28 @@
+filters:
+  and:
+    - file.inFolder("notes/ai")
+views:
+  - type: table
+    name: 按创建时间
+    order:
+      - file.name
+      - topic
+      - status
+      - created
+    sort:
+      - property: created
+        direction: DESC
+    columnSize:
+      file.name: 277
+  - type: table
+    name: 按状态分组
+    groupBy:
+      property: status
+      direction: ASC
+    order:
+      - file.name
+      - topic
+      - created
+    sort:
+      - property: created
+        direction: DESC

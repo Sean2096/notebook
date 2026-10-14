@@ -6,7 +6,7 @@ domain: AI
 topic: Streaming Chat
 status: 已完成
 created: 2026-09-15
-repo: "demos/01-streaming-chat（vault 内，node_modules 已被 Obsidian/git 忽略）"
+repo: "demos/ai/01-streaming-chat（vault 内，node_modules 已被 Obsidian/git 忽略）"
 demo: ""
 ---
 

@@ -6,8 +6,8 @@ domain: AI
 topic: RAG
 status: 已完成
 created: 2026-10-08
-repo: "demos/04-rag-minimal"
-demo: "demos/04-rag-minimal"
+repo: "demos/ai/04-rag-minimal"
+demo: "demos/ai/04-rag-minimal"
 ---
 
 # 04 RAG Minimal Demo

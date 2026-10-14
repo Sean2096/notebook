@@ -1,17 +1,15 @@
 filters:
   and:
-    - file.folder == "concepts"
+    - file.inFolder("notes/android")
 views:
   - type: table
     name: 按创建时间
     order:
       - file.name
-      - domain
       - topic
       - created
-      - status
     sort:
       - property: created
-        direction: ASC
+        direction: DESC
     columnSize:
       file.name: 277
