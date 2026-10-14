@@ -124,7 +124,7 @@ RRF 丢掉分数只用名次：`score(doc) = Σ 每一路 1/(k + rank_i)`，k �
 
 ## 关联
 - 上位概念：[[LLM 核心心智模型]]
-- 相关概念：[[Embedding 与向量检索]]、[[Function Calling]]、[[对话消息结构]]、[[RAG 应用评估]]、[[结构化输出与 Schema 校验]]
+- 相关概念：[[Embedding 与向量检索]]、[[Function Calling]]、[[对话消息结构]]、[[RAG 应用评估]]、[[结构化输出与 Schema 校验]]、[[流式响应与 AI 原生交互]]、[[上下文管理与窗口预算]]、[[Prompt 工程与指令遵循]]
 - 项目实践：[[04 RAG Minimal Demo]]
 
 ## 费曼问答记录

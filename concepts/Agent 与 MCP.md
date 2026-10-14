@@ -44,7 +44,7 @@ flowchart TD
 - MCP Server：工具提供方实现，暴露 Tools（调用工具）、Resources（读取数据/文件）、Prompts（预置提示模板）
 - MCP Client：你的应用，通过标准协议发现和调用所有已连接的 Server
 - 协议层：JSON-RPC 2.0，两种传输——**stdio**（本地，Client 把 Server 作为子进程启动，stdin/stdout 走协议消息、stderr 走日志）和 **Streamable HTTP**（远程，单一 `/mcp` 端点，POST 发请求，响应可为普通 JSON 或 SSE 流）。
-  ⚠️ 2024-11-05 版那套「POST 端点 + 独立 SSE 端点」的 HTTP+SSE 传输**已被官方标记 deprecated**，2025-03 起由 Streamable HTTP 取代；被弃用的是这套传输实现，SSE 作为技术仍在 Streamable HTTP 内部用于流式响应。更新的规范 revision 进一步去掉协议级握手与会话，改成每请求自包含（无状态），可部署到 Serverless。
+  ⚠️ 2024-11-05 版那套「POST 端点 + 独立 SSE 端点」的 HTTP+SSE 传输**已被官方标记 deprecated**——官方 transports 页原文："This replaces the HTTP+SSE transport from protocol version 2024-11-05"；被弃用的是这套传输实现，SSE 作为技术仍在 Streamable HTTP 内部用于流式响应。（再往后有 revision 把协议级握手与会话去掉、改成每请求自包含以便 Serverless 部署，**这条我没能从官方 spec 页取到原文引证，属待核实，面试别当定论说**。）
 
 ```mermaid
 flowchart LR
@@ -99,7 +99,7 @@ flowchart LR
 
 ## 关联
 - 上位概念：[[LLM 核心心智模型]]
-- 相关概念：[[Function Calling]]、[[对话消息结构]]、[[RAG 全链路]]
+- 相关概念：[[Function Calling]]、[[对话消息结构]]、[[RAG 全链路]]、[[流式响应与 AI 原生交互]]、[[上下文管理与窗口预算]]
 - 项目实践：[[03 Agent 与 MCP Demo]]
 
 ## 费曼问答记录

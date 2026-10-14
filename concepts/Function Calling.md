@@ -72,7 +72,7 @@ sequenceDiagram
 
 ## 关联
 - 上位概念：[[LLM 核心心智模型]]
-- 相关概念：[[对话消息结构]]、[[RAG 全链路]]、[[Agent 与 MCP]]、[[结构化输出与 Schema 校验]]
+- 相关概念：[[对话消息结构]]、[[RAG 全链路]]、[[Agent 与 MCP]]、[[结构化输出与 Schema 校验]]、[[流式响应与 AI 原生交互]]
 - 项目实践：[[02 Function Calling Demo]]
 
 ## 费曼问答记录
