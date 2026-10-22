@@ -82,7 +82,7 @@ flowchart TD
 ## 关联
 - 上位概念：[[LLM 核心心智模型]]
 - 相关概念：[[对话消息结构]]、[[结构化输出与 Schema 校验]]、[[RAG 全链路]]、[[Function Calling]]、[[上下文管理与窗口预算]]、[[RAG 应用评估]]
-- 项目实践：[[04 RAG Minimal Demo]]
+- 项目实践：[[AI 项目设计]]（01 LLM Behavior Lab、02 RAG Eval Lab）
 
 ## 待核实
 - `stopSequences`：官方 `stream-text` 参考页**已确认是 streamText 的入参**；但它在 DeepSeek via `@ai-sdk/openai` 兼容层是否被真正透传到服务端，属 provider 行为，未核实。

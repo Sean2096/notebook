@@ -76,7 +76,7 @@ flowchart LR
 ## 关联
 - 上位概念：[[LLM 核心心智模型]]
 - 相关概念：[[Function Calling]]、[[RAG 全链路]]
-- 项目实践：[[04 RAG Minimal Demo]]
+- 项目实践：[[AI 项目设计]]（02 RAG Eval Lab、04 AI Support Workbench）
 
 ## 费曼问答记录
 - Q: 公司换了一个更强的 embedding 模型，同事直接把新模型接上就上线，向量库旧数据没动——会发生什么？

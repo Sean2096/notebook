@@ -94,7 +94,7 @@ stateDiagram-v2
 ## 关联
 - 上位概念：[[LLM 核心心智模型]]
 - 相关概念：[[对话消息结构]]、[[Function Calling]]、[[Agent 与 MCP]]、[[RAG 全链路]]、[[结构化输出与 Schema 校验]]、[[上下文管理与窗口预算]]
-- 项目实践：[[01 流式 Chat Demo]]、[[03 Agent 与 MCP Demo]]
+- 项目实践：[[AI 项目设计]]（01 LLM Behavior Lab、04 AI Support Workbench）
 
 ## 待核实
 - 帧类型清单已按官方 `ai-sdk-ui/stream-protocol` 页核对（含 `[DONE]` 收尾与 `x-vercel-ai-ui-message-stream: v1` 请求/响应头），`stopSequences` / `abortSignal` / `maxOutputTokens` / `temperature` / `topP` 已按官方 `stream-text` 参考页确认存在；`onFinish` 为 `onEnd` 的 deprecated 别名同样出自该页。

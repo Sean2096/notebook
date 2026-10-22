@@ -124,7 +124,7 @@ v6+ 的额外好处：结构化输出可以和 tool calling（工具调用）在
 ## 关联
 - 上位概念：[[LLM 核心心智模型]]
 - 相关概念：[[Function Calling]]、[[对话消息结构]]、[[RAG 应用评估]]、[[Agent 与 MCP]]、[[Prompt 工程与指令遵循]]、[[上下文管理与窗口预算]]
-- 项目实践：[[02 Function Calling Demo]]
+- 项目实践：[[AI 项目设计]]（01 LLM Behavior Lab、03 Tool Agent Runtime）
 
 ## 费曼问答记录
 <!-- 每次费曼验收的题目和正确答案追加到此，格式：Q: / A: -->

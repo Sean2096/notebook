@@ -100,7 +100,7 @@ flowchart LR
 ## 关联
 - 上位概念：[[LLM 核心心智模型]]
 - 相关概念：[[Function Calling]]、[[对话消息结构]]、[[RAG 全链路]]、[[流式响应与 AI 原生交互]]、[[上下文管理与窗口预算]]
-- 项目实践：[[03 Agent 与 MCP Demo]]
+- 项目实践：[[AI 项目设计]]（03 Tool Agent Runtime、04 AI Support Workbench）
 
 ## 费曼问答记录
 - Q: Agent 和 Function Calling 到底差在哪？

@@ -65,7 +65,7 @@ flowchart LR
 ## 关联
 - 上位概念：无（本卡是根概念）
 - 相关概念：[[对话消息结构]]、[[Function Calling]]、[[Embedding 与向量检索]]、[[结构化输出与 Schema 校验]]、[[上下文管理与窗口预算]]、[[Prompt 工程与指令遵循]]
-- 项目实践：[[01 流式 Chat Demo]]
+- 项目实践：[[AI 项目设计]]（01 LLM Behavior Lab）
 
 ## 费曼问答记录
 - Q: 为什么跟 AI 聊了 20 轮之后，回复变慢了、变贵了？

@@ -119,7 +119,7 @@ flowchart LR
 ## 关联
 - 上位概念：[[RAG 全链路]]
 - 相关概念：[[Embedding 与向量检索]]、[[结构化输出与 Schema 校验]]、[[LLM 核心心智模型]]、[[Prompt 工程与指令遵循]]
-- 项目实践：[[04 RAG Minimal Demo]]
+- 项目实践：[[AI 项目设计]]（02 RAG Eval Lab、04 AI Support Workbench）
 
 ## 费曼问答记录
 <!-- 每次费曼验收的题目和正确答案追加到此，格式：Q: / A: -->
